@@ -1,0 +1,7 @@
+{
+  "name": "PhiColors",
+  "description": "A professional tool for selecting harmonious colors according to the golden ratio. Features an automatic contrast correction system to ensure compliance with WCAG AA standards.",
+  "requestFramePermissions": [
+    "clipboard-read"
+  ]
+}

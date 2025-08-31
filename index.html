@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PhiColors - Golden Ratio Color Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script>
+      // Prevents flash of incorrect theme
+      if (localStorage.getItem('phicolors-theme') === 'dark' || (!('phicolors-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
+    <style>
+      :root {
+        --thumb-color: #ffffff;
+        --thumb-border-color: #475569; /* slate-600 */
+        --halo-color: rgba(255, 255, 255, 0.7);
+      }
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      }
+      
+      /* Refactored Range Input Styles */
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 0.5rem;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      input[type="range"]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 0.5rem;
+        border-radius: 0.5rem;
+      }
+      input[type="range"]::-moz-range-track {
+        width: 100%;
+        height: 0.5rem;
+        border-radius: 0.5rem;
+      }
+      
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: var(--thumb-color);
+        border-radius: 50%;
+        border: 4px solid var(--thumb-border-color);
+        margin-top: -6px;
+        transition: transform 0.2s ease-in-out;
+      }
+      input[type="range"]:active::-webkit-slider-thumb {
+        transform: scale(1.2);
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: var(--thumb-color);
+        border-radius: 50%;
+        border: 4px solid var(--thumb-border-color);
+      }
+       input[type="range"]:active::-moz-range-thumb {
+        transform: scale(1.2);
+      }
+
+      /* Hide number input arrows */
+      input[type=number]::-webkit-inner-spin-button,
+      input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type=number] {
+        -moz-appearance: textfield;
+      }
+
+      /* Refactored Halo effect animation */
+      @keyframes halo-pulse {
+        0%, 100% { box-shadow: 0 0 10px 2px var(--halo-color); }
+        50% { box-shadow: 0 0 20px 5px var(--halo-color); }
+      }
+      .halo {
+        animation: halo-pulse 2.5s infinite ease-in-out;
+      }
+      
+      /* Animated Gradient for Logo */
+      @keyframes gradient-animation {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      .animated-gradient-text {
+        background-image: linear-gradient(
+          -45deg,
+          #ee7752,
+          #e73c7e,
+          #23a6d5,
+          #23d5ab
+        );
+        background-size: 400% 400%;
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        animation: gradient-animation 10s ease infinite;
+      }
+
+      @keyframes background-pan {
+        0% {
+          background-position: 0% 0%;
+        }
+        25% {
+          background-position: 100% 0%;
+        }
+        50% {
+          background-position: 100% 100%;
+        }
+        75% {
+            background-position: 0% 100%;
+        }
+        100% {
+            background-position: 0% 0%;
+        }
+      }
+      .animated-bg {
+        background-size: 200% 200%;
+        animation: background-pan 25s linear infinite;
+      }
+
+      /* Tooltip fade-in animation */
+      @keyframes fade-in-fast {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+      }
+      .animate-fade-in-fast {
+        animation: fade-in-fast 0.15s ease-out forwards;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react-dom": "https://aistudiocdn.com/react-dom@^19.1.1"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
