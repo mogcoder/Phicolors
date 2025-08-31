@@ -1,6 +1,7 @@
 import React from 'react';
 import { PhiLogoIcon, AboutIcon, ContactIcon, PhiSymbolIcon } from './icons/Icons';
 import Tooltip from './Tooltip';
+import ThemeToggle from './ThemeToggle';
 
 interface HeaderProps {
     onAboutClick: () => void;
@@ -33,6 +34,7 @@ const Header: React.FC<HeaderProps> = ({ onAboutClick, onContactClick, onGoldenR
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
+                <ThemeToggle />
                 <Tooltip content="The Golden Ratio">
                   <NavButton onClick={onGoldenRatioClick} ariaLabel="Learn about the Golden Ratio">
                     <PhiSymbolIcon className="w-5 h-5" />

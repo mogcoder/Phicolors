@@ -85,8 +85,7 @@ const Tooltip: React.FC<TooltipProps> = ({ content, children, position = 'top', 
       onBlur={hideTooltip}
     >
       {React.cloneElement(children, {
-        // FIX: The error indicates the project's React typings expect camelCase for ARIA attributes.
-        // Changed from 'aria-describedby' to `ariaDescribedby` to resolve the type error.
+        // FIX: The ARIA attribute `aria-describedby` should be camelCased in React props.
         ariaDescribedby: content ? id : undefined,
       })}
       {isVisible && content && createPortal(

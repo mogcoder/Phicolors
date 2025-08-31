@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PhiColors - Golden Ratio Color Tool</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      // Explicitly set Tailwind to use class-based dark mode
+      tailwind.config = {
+        darkMode: 'class',
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script>
@@ -21,9 +27,46 @@
         --thumb-color: #ffffff;
         --thumb-border-color: #475569; /* slate-600 */
         --halo-color: rgba(255, 255, 255, 0.7);
+        
+        /* Light Theme Scrollbar Colors */
+        --scrollbar-track-color: #e2e8f0; /* slate-200 */
+        --scrollbar-thumb-color: #94a3b8; /* slate-400 */
+        --scrollbar-thumb-hover-color: #64748b; /* slate-500 */
       }
+      
+      .dark {
+        /* Dark Theme Scrollbar Colors */
+        --scrollbar-track-color: #1e293b; /* slate-800 */
+        --scrollbar-thumb-color: #475569; /* slate-600 */
+        --scrollbar-thumb-hover-color: #64748b; /* slate-500 */
+      }
+
       body {
         font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      }
+      
+      /* Custom Theme-Aware Scrollbars */
+      /* For Webkit browsers (Chrome, Safari, Edge) */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background-color: var(--scrollbar-track-color);
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: var(--scrollbar-thumb-color);
+        border-radius: 10px;
+        border: 2px solid var(--scrollbar-track-color);
+        transition: background-color 0.2s ease-in-out;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: var(--scrollbar-thumb-hover-color);
+      }
+      /* For Firefox */
+      html {
+        scrollbar-width: thin;
+        scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
       }
       
       /* Refactored Range Input Styles */
@@ -107,55 +150,66 @@
           #23d5ab
         );
         background-size: 400% 400%;
-        background-clip: text;
+        animation: gradient-animation 15s ease infinite;
         -webkit-background-clip: text;
-        color: transparent;
-        animation: gradient-animation 10s ease infinite;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
       }
-
-      @keyframes background-pan {
-        0% {
-          background-position: 0% 0%;
-        }
-        25% {
-          background-position: 100% 0%;
-        }
-        50% {
-          background-position: 100% 100%;
-        }
-        75% {
-            background-position: 0% 100%;
-        }
-        100% {
-            background-position: 0% 0%;
-        }
-      }
-      .animated-bg {
-        background-size: 200% 200%;
-        animation: background-pan 25s linear infinite;
-      }
-
-      /* Tooltip fade-in animation */
       @keyframes fade-in-fast {
-        from { opacity: 0; transform: scale(0.95); }
-        to { opacity: 1; transform: scale(1); }
+        from { opacity: 0; transform: translateY(-4px); }
+        to { opacity: 1; transform: translateY(0); }
       }
       .animate-fade-in-fast {
-        animation: fade-in-fast 0.15s ease-out forwards;
+        animation: fade-in-fast 0.2s ease-out forwards;
       }
+      
+      /* Professional Animated Theme Toggle Icon */
+      .theme-toggle-icon,
+      .theme-toggle-sun-rays,
+      .theme-toggle-moon-mask {
+        transform-origin: center center;
+      }
+      .theme-toggle-icon {
+        /* A smoother, more elegant rotation */
+        transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      }
+      .theme-toggle-sun-rays {
+        /* Rays now scale down as they fade and rotate */
+        transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s ease-out;
+      }
+      .theme-toggle-moon-mask {
+        /* The mask slides in smoothly to create the crescent */
+        transition: transform 0.5s cubic-bezier(0.45, 0, 0.55, 1);
+      }
+
+      /* Dark Mode styles for the icon (Moon state) */
+      .dark .theme-toggle-icon {
+        transform: rotate(90deg);
+      }
+      .dark .theme-toggle-sun-rays {
+        transform: scale(0.5) rotate(45deg);
+        opacity: 0;
+      }
+      .dark .theme-toggle-moon-mask {
+        /* A more pronounced slide for a clear crescent */
+        transform: translate(-10px, 10px);
+      }
+
     </style>
-  <script type="importmap">
+    <script type="importmap">
 {
   "imports": {
-    "react/": "https://aistudiocdn.com/react@^19.1.1/",
-    "react": "https://aistudiocdn.com/react@^19.1.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
-    "react-dom": "https://aistudiocdn.com/react-dom@^19.1.1"
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "react/": "https://esm.sh/react@18.2.0/",
+    "react-dom/": "https://esm.sh/react-dom@18.2.0/"
   }
 }
 </script>
-</head>
-  <body>
+  </head>
+  <body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
