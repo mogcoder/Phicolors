@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import type { HSLColor, FullColor, ColorMap, ColorRole } from './types';
 import { generateGoldenRatioPaletteHues, hslToRgb, rgbToHex, adjustLightnessForContrast, createDefaultColorMap, generateHarmonyPalette, Harmony, mixColorsGoldenMean, rgbToHsl } from './utils/colorUtils';
@@ -9,10 +6,12 @@ import ColorSwatch from './components/ColorSwatch';
 import Header from './components/Header';
 import AboutModal from './components/AboutModal';
 import ContactModal from './components/ContactModal';
+import ExportModal from './components/ExportModal';
 import HarmonySuggestions from './components/HarmonySuggestions';
 import PreviewArea from './components/previews/PreviewArea';
 import Tooltip from './components/Tooltip';
 import GoldenRatioModal from './components/GoldenRatioModal';
+import { ExportIcon } from './components/icons/Icons';
 
 /**
  * Generates and optionally corrects a full color palette.
@@ -44,6 +43,7 @@ const App: React.FC = () => {
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isGoldenRatioModalOpen, setIsGoldenRatioModalOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   
   const [harmonyKey, setHarmonyKey] = useState(0);
   const [colorMap, setColorMap] = useState<ColorMap | null>(null);
@@ -137,108 +137,6 @@ const App: React.FC = () => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
-  
-  const handleExportImage = () => {
-    const mixedColors = complementaryColors.map(compColor => {
-      const mixedRgb = mixColorsGoldenMean(baseColor.rgb, compColor.rgb);
-      const mixedHsl = rgbToHsl(mixedRgb.r, mixedRgb.g, mixedRgb.b);
-      const mixedHex = rgbToHex(mixedRgb.r, mixedRgb.g, mixedRgb.b);
-      return { hsl: mixedHsl, rgb: mixedRgb, hex: mixedHex };
-    });
-
-    const PADDING = 50;
-    const SWATCH_SIZE = 150;
-    const GAP = 30;
-    const SECTION_TITLE_MARGIN_BOTTOM = 20;
-    const SECTION_GAP = 60;
-    const HEX_CODE_MARGIN_TOP = 15;
-    
-    const FONT_STACK = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif";
-    const FONT_H1 = `bold 32px ${FONT_STACK}`;
-    const FONT_H2 = `bold 24px ${FONT_STACK}`;
-    const FONT_HEX = `18px ${FONT_STACK}`;
-
-    const H1_HEIGHT = 40;
-    const H2_HEIGHT = 30;
-    const HEX_HEIGHT = 20;
-    
-    const BG_COLOR = '#f8fafc';
-    const TEXT_COLOR = '#0f172a';
-
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
-    const sections = [
-      { title: 'Base Color', colors: [baseColor] },
-      { title: 'Complementary Colors', colors: complementaryColors },
-      { title: 'Golden Mean Mixes', colors: mixedColors },
-    ].filter(s => s.colors.length > 0);
-
-    const maxSwatchesInRow = Math.max(...sections.map(s => s.colors.length));
-    const contentWidth = maxSwatchesInRow * SWATCH_SIZE + (maxSwatchesInRow - 1) * GAP;
-    const canvasWidth = PADDING * 2 + contentWidth;
-
-    let totalHeight = PADDING;
-    totalHeight += H1_HEIGHT;
-    totalHeight += SECTION_GAP;
-
-    sections.forEach((section, index) => {
-        totalHeight += H2_HEIGHT;
-        totalHeight += SECTION_TITLE_MARGIN_BOTTOM;
-        totalHeight += SWATCH_SIZE;
-        totalHeight += HEX_CODE_MARGIN_TOP;
-        totalHeight += HEX_HEIGHT;
-        if (index < sections.length - 1) {
-            totalHeight += SECTION_GAP;
-        }
-    });
-    totalHeight += PADDING;
-
-    canvas.width = canvasWidth;
-    canvas.height = totalHeight;
-
-    ctx.fillStyle = BG_COLOR;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.font = FONT_H1;
-    ctx.fillStyle = TEXT_COLOR;
-    ctx.textAlign = 'center';
-    ctx.fillText('PhiColors Palette', canvas.width / 2, PADDING + H1_HEIGHT / 2);
-    
-    let currentY = PADDING + H1_HEIGHT + SECTION_GAP;
-    
-    sections.forEach(section => {
-      const sectionWidth = section.colors.length * SWATCH_SIZE + (section.colors.length - 1) * GAP;
-      const startX = (canvas.width - sectionWidth) / 2;
-
-      ctx.font = FONT_H2;
-      ctx.fillStyle = TEXT_COLOR;
-      ctx.textAlign = 'left';
-      ctx.fillText(section.title, startX, currentY + H2_HEIGHT / 2);
-      currentY += H2_HEIGHT + SECTION_TITLE_MARGIN_BOTTOM;
-
-      section.colors.forEach((color, i) => {
-        const x = startX + i * (SWATCH_SIZE + GAP);
-        const y = currentY;
-
-        ctx.fillStyle = color.hex;
-        ctx.fillRect(x, y, SWATCH_SIZE, SWATCH_SIZE);
-        
-        ctx.font = FONT_HEX;
-        ctx.fillStyle = TEXT_COLOR;
-        ctx.textAlign = 'center';
-        ctx.fillText(color.hex, x + SWATCH_SIZE / 2, y + SWATCH_SIZE + HEX_CODE_MARGIN_TOP + HEX_HEIGHT / 2);
-      });
-      
-      currentY += SWATCH_SIZE + HEX_CODE_MARGIN_TOP + HEX_HEIGHT + SECTION_GAP;
-    });
-
-    const link = document.createElement('a');
-    link.download = `phicolors-palette-${baseColor.hex.substring(1)}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-  };
 
   const handleLoadPalette = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -323,12 +221,12 @@ const App: React.FC = () => {
                           </button>
                         </Tooltip>
 
-                        <Tooltip content="Export palette as a PNG image.">
+                        <Tooltip content="Export palette as image or code.">
                           <button
-                            onClick={handleExportImage}
+                            onClick={() => setIsExportModalOpen(true)}
                             className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-100 dark:focus:ring-offset-slate-900 focus:ring-slate-500"
                           >
-                            <span className="text-lg" aria-hidden="true">🖼️</span>
+                            <ExportIcon className="w-5 h-5" />
                             <span>Export</span>
                           </button>
                         </Tooltip>
@@ -381,6 +279,12 @@ const App: React.FC = () => {
       <AboutModal isOpen={isAboutModalOpen} onClose={() => setIsAboutModalOpen(false)} />
       <ContactModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />
       <GoldenRatioModal isOpen={isGoldenRatioModalOpen} onClose={() => setIsGoldenRatioModalOpen(false)} />
+      <ExportModal 
+        isOpen={isExportModalOpen} 
+        onClose={() => setIsExportModalOpen(false)} 
+        palette={fullColorPalette}
+        colorMap={colorMap}
+      />
     </div>
   );
 };
